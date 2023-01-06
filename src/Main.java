@@ -1,5 +1,8 @@
+import City.*;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world!");
+        City city = new City();
+        city.monthSimulation();
     }
 }
