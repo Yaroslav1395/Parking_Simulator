@@ -36,8 +36,8 @@ public class Journal {
     public void completeEntry(LocalDateTime time, String carNumber){
         parkingJournal.get(carNumber).get(getIndexLastElementOfJournalList(carNumber)).setCheckOut(time);
     }
-
-    public int getIndexLastElementOfJournalList(String carNumber){
+    //-------------работа со списком----------------------------------------------
+    private int getIndexLastElementOfJournalList(String carNumber){
         return  parkingJournal.get(carNumber).size() - 1;
     }
     public Entry getLastElementOfCarCheckList(String carNumber){

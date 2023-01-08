@@ -3,16 +3,17 @@ package City;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 import Car.Car;
 import Parking.Parking;
-import State.*;
+
 
 public class City {
-    private List<Car> carInCity = new ArrayList<>();
-    private Parking parking = new Parking();
+    private final List<Car> carInCity = new ArrayList<>();
+    private final Parking parking = new Parking();
     private LocalDateTime time;
     private final Random random = new Random();
 
@@ -20,6 +21,16 @@ public class City {
     public City() {
         time = LocalDateTime.now();
         fillTheCityWithCars();
+        monthSimulation();
+    }
+
+    //---------------Гетеры и сетеры---------------------------------------
+    public List<Car> getCarInCity() {
+        return new ArrayList<>(carInCity);
+    }
+
+    public Parking getParking() {
+        return new Parking(parking);
     }
 
     //---------------Заполнение города машинами-----------------------------
@@ -31,14 +42,14 @@ public class City {
         }
     }
     //---------------Симуляция месяца-----------------------------------------
-    public void monthSimulation(){
+    private void monthSimulation(){
         LocalDateTime timeForSimulation = time.plusMonths(1);
         while (time.isBefore(timeForSimulation)){
             makeMove();
         }
     }
     //---------------Симуляция хода------------------------------------------
-    public void makeMove(){
+    private void makeMove(){
         time = time.plusMinutes(5);
         parking.ticketing(time);
         randomStateChange();
@@ -70,7 +81,7 @@ public class City {
                 removeCar.add(car);
             }
         }
-        parking.getParking().removeAll(removeCar);
+        parking.removeCarInParking(removeCar);
     }
 
 }

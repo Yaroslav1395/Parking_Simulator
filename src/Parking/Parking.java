@@ -11,9 +11,18 @@ public class Parking {
     private List<Car> parking = new ArrayList<>();
     private Journal journal = new Journal();
 
+    //------------------Конструкторы-----------------------------------------
+    public Parking() {
+    }
+
+    public Parking(Parking parking) {
+        this.parking = parking.getParking();
+        this.journal = parking.getJournal();
+    }
+
     //---------------------Гетеры и сетеры------------------------------------
     public List<Car> getParking() {
-        return parking;
+        return new ArrayList<>(parking);
     }
 
     public void setParking(List<Car> parking) {
@@ -26,6 +35,7 @@ public class Parking {
     public void setJournal(Journal journal) {
         this.journal = journal;
     }
+
     //---------------------Регистрация въезда и выезда------------------------------
     public void carRegistrationCheckIn(Car car, LocalDateTime time){
         parking.add(car);
@@ -52,5 +62,9 @@ public class Parking {
     }
     private boolean timeCheckForRent(LocalDateTime time, Entry entry){
         return timeCheckInCity(time) && timeCheckInParking(time, entry);
+    }
+    //-----------------Удаление элементов-------------------------------------------------
+    public void removeCarInParking(List<Car> cars){
+         parking.removeAll(cars);
     }
 }

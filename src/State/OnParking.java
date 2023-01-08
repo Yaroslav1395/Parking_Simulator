@@ -10,7 +10,6 @@ public class OnParking extends State{
 
     @Override
     public void changeState() {
-        System.out.println(super.getCar().getId() + " - выехал с парковки");
         super.getCar().setState(new InCity(super.getCar()));
     }
 }
