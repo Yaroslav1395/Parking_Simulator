@@ -10,6 +10,9 @@ import java.time.LocalDateTime;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public class UserInterface implements Countable{
     private final City city = new City();
@@ -57,6 +60,7 @@ public class UserInterface implements Countable{
             return userString;
         }
         catch (IllegalArgumentException e){
+            userString = "";
             System.out.println("\nСтока не эквивалентна примеру. Попробуйте снова");
             userString = userInputDate();
         }
@@ -78,7 +82,8 @@ public class UserInterface implements Countable{
     }
     //-------------Методы расчета статистики----------------------------------------------
     @Override
-    public void dailyIncomeCalculation(LocalDate time, Map<String, LinkedList<Entry>> journal) {
+    public void dailyIncomeCalculation(Map<String, LinkedList<Entry>> journal) {
+        LocalDate time = castUserInputDate();
         double sum = 0d;
         for(List<Entry> entryList : journal.values()){
             for (Entry entry: entryList) {
@@ -300,6 +305,11 @@ public class UserInterface implements Countable{
         }
     }
 
+    @Override
+    public boolean finish() {
+        return true;
+    }
+
     //-------------Адаптация данных введенных пользователем-----------------------------------
     private LocalDate castUserInputDate(){
         String stringDate = userInputDate();
@@ -315,39 +325,25 @@ public class UserInterface implements Countable{
 
     //---------------Реализация интерфейса-------------------------
     public void startInterface(){
-        userInterfacePrint();
+        Map<String, LinkedList<Entry>> journal = city.getParking().getJournal().getParkingJournal();
         boolean isEnd = false;
-        while (!isEnd){
-            Map<String, LinkedList<Entry>> journal = city.getParking().getJournal().getParkingJournal();
-            switch (userInputNumber(8, "Введите номер действия: ")){
-                case 1 :
-                    LocalDate localDate = castUserInputDate();
-                    dailyIncomeCalculation(localDate, journal);
-                    break;
-                case 2 :
-                    maxMiddleMinIncomeCalculation(journal);
-                    break;
-                case 3 :
-                    longestParkedCars(journal);
-                    break;
-                case 4:
-                    carStayTotalThirtyMin(journal);
-                    break;
-                case 5:
-                    parkingOccupancyPercentage(city.getParking());
-                    break;
-                case 6:
-                    carInParkingGivenDay(journal);
-                    break;
-                case 7:
-                    byNumberGetDayInParking(journal);
-                    break;
-                case 0 :
-                    isEnd = true;
-                    break;
-            }
-        }
 
+        userInterfacePrint();
+        Map<Integer, Function<UserInterface, Boolean>> methods = Map.of(
+                1, (value) -> {value.dailyIncomeCalculation(journal); return false;},
+                2, (value) -> {value.maxMiddleMinIncomeCalculation(journal); return false;},
+                3, (value) -> {value.longestParkedCars(journal); return false;},
+                4, (value) -> {value.carStayTotalThirtyMin(journal); return false;},
+                5, (value) -> {value.parkingOccupancyPercentage(city.getParking()); return false;},
+                6, (value) -> {value.carInParkingGivenDay(journal); return false;},
+                7, (value) -> {value.byNumberGetDayInParking(journal); return false;},
+                8, (value) -> true
+        );
+
+        while (!isEnd){
+            int userInputNumber = userInputNumber(8, "Введите номер действия: ");
+            isEnd = Optional.ofNullable(methods.get(userInputNumber)).orElse((value) -> false).apply(this);
+        }
     }
 
 }
